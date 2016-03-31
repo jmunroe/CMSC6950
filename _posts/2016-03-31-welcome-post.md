@@ -1,5 +1,5 @@
 ---
-published: false
+published: true
 ---
 
 ## Welcome to CMSC6950
