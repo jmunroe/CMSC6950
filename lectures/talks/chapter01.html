@@ -1533,7 +1533,7 @@ The first part of this command uses export to set the PATH variable. Everything 
 In the same way that you can create variables for shortening long strings (like $DATA, the path to your data), you can create shorthand aliases for commands. alias does a simple replacement of the first argument by the second. If, for example, you like colors to distinguish the files and directories in your shell session, you’ll always want to use the --color variable when calling ls. However, ls --color is quite a lot to type. It is preferable to reset the meaning of ls so that it behaves like ls --color. The alias command allows you to do just that. To replace ls with ls --color, you would type:
 
 ```sh
-alias ls 'ls --color'
+alias ls='ls --color'
 ```
 
 Once that command has been executed in the terminal, typing ls is equivalent to typing ls --color. Just like an environment variable, to make an alias active every time you open a new terminal, you must add this definition to your .bashrc file, which is executed upon login.
@@ -1541,7 +1541,7 @@ Once that command has been executed in the terminal, typing ls is equivalent to 
 Note, on OS X the option for colours with ls is instead
 
 ```sh
-alias ls 'ls -G'
+alias ls='ls -G'
 ```
 
 
