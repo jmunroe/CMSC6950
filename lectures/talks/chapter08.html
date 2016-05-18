@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>CMSC 6950</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <!-- This is template for http://remarkjs.com/ by Ole Petter Bang -->
+    <!-- CSS modifcations by J. M. Lilly-->
+      
+    <script src="../javascript/live.js" type="text/javascript"></script>
+
+    <style type="text/css">
+            body { font-family: 'Georgia';
+                    letter-spacing:0.025em;}
+      h1, h2, h3 {
+        font-family: 'Georgia';
+        font-weight: normal;
+      }
+      .remark-slide-content h1 { font-size: 2.4em; color:#505050;font-weight: bold;letter-spacing:0.05em}
+      .remark-slide-content h2 { font-size: 1.55em;color:#505050;font-weight: bold;letter-spacing:0.05em;margin-top:0em}
+      .remark-slide-content  h3 { font-size: 1.4em;color:#505050;font-weight: bold;letter-spacing:0.05em;margin-top:0em}
+      .remark-slide-content p,ol,ul { font-size: 1.2em; }
+      .remark-code, .remark-inline-code { font-family: 'Courier New'; }
+      .remark-fading { z-index: 9; } 
+        
+      /* Thanks to http://www.partage-it.com/animez-vos-presentations-remark-js/  (in French) */
+      .remark-slide-container {transition: opacity 0.0s ease-out;opacity: 0}
+
+      .remark-visible {transition: opacity 0.0s ease-out;opacity: 1;}
+        
+      /* Two-column layout */
+      .left-column {
+        width: 50%;
+        float: left;
+      }
+      .right-column {
+        width: 49%;
+        float: right;
+        padding-top: 0em;
+        margin-top: 0em;
+        text-align: left;
+      }    
+      .footnote {  
+        position:absolute;
+        bottom: 1em;
+        left: 14em;
+        font-size: 0.7em;
+       }
+        
+      /* Some special classes */
+      .title {font-size: 3.3em; color:#606060;font-weight:bold;letter-spacing:0.05em}
+      .subtitle {font-size: 1.4em}
+      .author {font-size: 1.4em; color:#606060;font-weight:bold;letter-spacing:0.02em}  
+      .coauthor {font-size: 1.0em; color:#606060;font-weight:bold;letter-spacing:0.02em}  
+      .institution {font-size: 1.0em;}
+      .date {font-size: 1.0em;font-style: italic}
+    
+      .cite {font-size: 0.8em; color:#33AA99;font-style: italic}
+      .strike {color:salmon;text-decoration:line-through}
+        
+      /*Set color scheme for links.*/    
+      a {text-decoration: none; color: #666666;text-align:center; width: 24%}
+      /*Setting link properties is particular, do not change order below*/   
+      a:visited {color:#666666}
+      a:hover {color:#33AA99}  
+      a:active, a#active {color:#FF9700;} 
+    </style>
+  </head>
+  <body>
+    <textarea id="source">
+
+
+# Chapter 8. Regular Expressions
+
+- Searching for and correcting irregularities
+- Finding and replacing text across hundreds of files
+- Evaluating mathematical expressions
+- Manipulating number formatting
+- Rearranging column-formatted data
+
+Regular expressions: a common syntax for matching patterns of characters in text files, data files, filenames, and other sequences of characters. 
+
+---
+
+## Uses of regular expressions (regexs)
+
+This syntax is ubiquitous in the programming world because it can turn an enormous, tedious file cleanup task into a tiny one-line command. Additionally, it can help with day-to-day command-line navigation, file parsing, and text editing.
+
+
+- Navigate the command line more efficiently.
+- Quickly find files on the command line based on their content (*grep*).
+- Find and replace a complex expression in many files at once (*sed*).
+- Quickly do math on plain-text columns of data from the command line (*awk*).
+
+---
+
+
+## Example: Messy Magnetism
+
+Imagine you have data from hundreds of satellites on magnetic field measurements around the Earth. 
+Different private companies operating these satellites have different standard file formats, and the data is scattered across several different computers.  Your job is to
+
+- Find the files from each company and collect them into a single directory.
+- Standardize the formats of dates, times, and labels across all the files.
+- If the flux energy is in units of gauss (G), convert it to teslas (T).
+
+---
+
+
+## Regular Expressions
+
+- Metacharacters are characters that have a special meaning aside from their literal meaning. 
+- Literal characters are those that are being taken at face value. 
+
+Regular expressions are strings made of metacharacters and literal characters.
+
+### Rules
+
+- Alphanumeric characters match themselves.
+- A dot (.) matches any character.
+- Repeating patterns are matched with *, +, and ?.
+- Character sets ([]) and the or operator (|) can match alternatives.
+- The position markers ^ and $ match the beginning and end of a line, respectively.
+- Parentheses can group things and extract information from matches.
+
+---
+
+## The Wildcard (*)
+
+Wildcard characters can be used to find files more effectively. 
+The asterisk (\*) allows the user to list all the text files in a 
+directory by typing ls \*.txt, because \* means “zero or more of any character.” This is because the asterisk is a metacharacter in the shell.
+
+Regular expressions are a language of metacharacters used for the purpose of pattern matching.
+
+In a regular expression, the wildcard \* matches the preceding item zero or more times. 
+
+#### Examples:
+- zo\* **zooo**med
+- zo\* motogu**z**zi
+- zo\* proto**zo**an
+- p\*i mississi**ppi**
+
+---
+
+
+## Listing Files with Simple Patterns 
+
+To find all of the .dat files in the current working directory, then, we can execute a simple ls command using the asterisk syntax. 
+
+
+```
+$ ls *.dat
+
+atmos_sat_42.dat
+siriuscybernet_21.dat
+siriuscybernet_22.dat
+siriuscybernet_23.dat
+siriuscybernet_24.dat
+Telecomm99_2014.5.3.dat
+Telecomm99_2014.5.4.dat
+zorbital34l.2014.05.01.dat
+zorbital34l.2014.05.06.dat
+```
+
+This syntax means “List all files beginning with zero or more of any character, followed by the .dat string.” 
+
+---
+
+
+### Limitations
+
+- The ls command only goes one level deep into the directory tree. Upon inspection, it becomes clear that the filesystem is riddled with directories and subdirectories of the data. For example, executing ls (with no argument) illuminates a few dozen directories named things like MegaCorp and Oscorp, which certainly contain more satellite data from the satellites owned by those megacorporations.
+- Further inspection also indicates that a few files in the home directory weren’t caught because they had a different file extension. Observed extensions so far include .txt, .data, and an all-caps .DAT.
+
+Does this mean we have to enter every directory and execute multiple forms of the ls command? Traversing the filesystem one directory at a time, repeating a few ls *.dat commands in each directory, is not the way to spend an afternoon.
+
+---
+
+
+## Globally Finding Filenames with Patterns (find)
+A better way to spend the afternoon might be at the beach. To get out of the lab, we’ll have to find a tool that can recursively search a lot of directories at once. That would improve this situation mightily. Thankfully, that tool exists, and it is called find.
+
+The find command can be used in many ways. One option is to use it with regular expressions. In that mode, find is executed on the command line using the format:
+
+```
+find [path] -regex "<expression>"
+```
+
+With this syntax, the top level of the search will be the indicated <path>. find will begin at that location and recursively parse filenames using regular expressions (-regex). The expression for which it will seek matches is provided between the double quotes.
+
+---
+
+
+To find all data files in the home directory and all subdirectories of the home directory, find can be used thus, in our case:
+
+```
+find ~ -regex ".*\.dat"
+```
+
+This finds all files in ~ and all subdirectories of ~ whose names end in “.dat”.  Why the extra backslashes?
+
+Fundamentally, this is because the set of metacharacters available to the ls command is a different flavor. While the wildcard is available on the command line, it doesn’t mean the same thing on the command line that it does in proper regular expression syntax. On the command line, .* means “one dot (.), then zero or more of any character.” In a regex, it means “zero or more of any character (.).”
+
+So, we need the extra characters because the dot character (.) is not a metacharacter on the command line. On the command line, it signifies the current working directory or, when it appears at the beginning of a filename, a hidden file, as discussed in Chapter 1. However, the dot character (.) is a metacharacter in proper regular expressions. For this reason, the backslash is used before the real dot in “.dat” to indicate it should be taken literally.
+
+---
+
+
+## REPRESENTING ANY CHARACTER (.)
+
+The dot character in a regular expression is very simple: it represents exactly one of any character. Note that the dot means something different on the command line, as just described.
+
+NOTE
+This bears repeating. On the command line, the dot does not mean “any character.” In proper regular expressions, however, it does. On the command line, the dot already has a special meaning; to represent “any character,” the ? can be used instead.
+
+Since the dot means any character, it can be used to help match many files whose names share most, but not all, characters. 
+
+#### Example: r.d.
+- rads
+- rodeo
+- rider
+- red!
+- r2d2
+---
+
+
+In our example with the satellite .dat files, many of the Sirius Cybernetics satellite files had very similar names:
+
+```
+siriuscybernet_21.dat
+siriuscybernet_22.dat
+siriuscybernet_23.dat
+siriuscybernet_24.dat
+siriuscybernet_68.dat
+siriuscybernet_92.dat
+```
+
+Indeed, many of those filenames include numbers in the 20s. Those files with numbers that start with 2 could be matched exactly with the regular expression:
+
+```
+siriuscybernet_2.\.dat
+```
+
+The first part of the expression, siriuscybernet_2, matches that string exactly. This pattern therefore matches the first four filenames in the preceding list, but not the last two (siriuscybernet_68.dat and siriuscybernet_92.dat).
+
+The next character in the expression is the “one of any character” represented by the dot (.). In the case of the first file, the dot matches the 1. In the case of the second file, it matches the 2, and so on.
+
+
+---
+
+
+## ESCAPING METACHARACTERS (\)
+
+Sometimes, as in the previous example, the pattern that you would like to match contains an actual dot (.) or an actual asterisk (*). To indicate the literal . character rather than the . metacharacter, it must be escaped. To escape a metacharacter is to escape its meta-meaning. We escape metacharacters by using the backslash (\). The expression . means “exactly one of any character.” However, the expression \. means “exactly one dot.” 
+
+
+#### Examples
+- deat.\* **deathstar**
+- deat.\\\* **death* **
+
+As a further example, escape character is used in the shell for filenames that contain spaces.
+
+---
+
+
+## ESCAPING LITERALS
+
+Indeed, in addition to transforming metacharacters into literals, the ubiquitous backslash transforms many literals into metacharacters. 
+
+
+#### Examples
+- end-of-line characters \n (linefeed) and \r (carriage return)
+- tab metacharacter \t
+- NULL metacharacter \0
+- whitespace metacharacter \s. 
+
+---
+
+
+<hr>
+
+### EXERCISE: ESCAPING THE ESCAPE CHARACTER
+- Open a terminal.
+- Try to create a file that has a backslash in the filename with a command like touch file\name.
+- Use ls to examine the file you’ve just created. Did it work? Where is the slash?
+- Use what you’ve just learned to escape the escape character. Can you successfully make a file called file\name?
+
+<hr> 
+
+---
+
+## FINDING EITHER ONE PATTERN OR ANOTHER (|)
+
+In order to match files with various extensions (.txt, .dat, .data, .DAT), we need to have an or Boolean available. 
+
+With regular expressions, this is called alternation and is accomplished with the | syntax. 
+
+That is, to search for any appearance of the word proton or the word neutron, you would separate the two with a vertical bar: proton|neutron. 
+
+For more options, continue to expand the list: proton|neutron|electron|boson.
+
+---
+
+
+<hr> 
+
+### EXERCISE: REVERSE-ENGINEER A REGEX
+The following string will find either .dat or .DAT extended files:
+
+```
+$ find . -regextype posix-extended -regex ".*\(\.dat\|\.DAT\)"
+```
+- Can you tell why?
+- What are the slashes there for?
+- What about the extra specification of -regextype posix-extended?
+- Can you find out what that means from the man page for find?
+
+<hr>
+
+---
+
+
+## CHARACTER SETS ([…])
+
+The syntax that allows matching of a set of characters is [] or [{}], depending on the tool being used. A character set matches any one of the enclosed characters. 
+
+
+#### Examples
+- Col[ou]mbia Columbia, Colombia
+- [Dd]ata Data, data
+- [Dd][Aa][Tt][Aa] DATA, data, Data
+- 2014[-.]05[-.]10 2014.05.10, 2014-05-10
+
+This makes it easy to avoid worrying about capitalization, varying spellings across the pond, and many other matching issues. In our case, it means that .DAT, .dat, and .data files can all be found with one expression:
+
+```
+$ find . -regex ".*\.[Dd][Aa][Tt][Aa]*"
+```
+---
+
+
+## KEY FEATURES OF CHARACTER SETS
+
+A character set will match any one character from the set of characters between the brackets. [Dd]ad will match Dad or dad.
+
+Character sets can be specified in shorthand over a range using a hyphen. For letters, [lmnop] is identical to [l-p]. Each set will match any one of the characters “l” through “p” (like the “p” in “zap” or the “l” in “laser”). This works for both numbers and letters. Thus, [0-9] matches any digit.
+
+A character set can indicate characters that we want to avoid. A caret in the square brackets ([^{...}]) denotes a negated character set: it will match anything not in the square brackets. For instance, [\^aeiou] matches only consonants.
+
+Character sets can be combined. [a-zA-Z] is valid notation matching all letters, irrespective of case.
+
+These sets also can be referred to by nicknames, such as [:alpha:] (letters), [:alnum:] (letters and numbers), [:lower:] (lowercase letters), [:digit:] (numbers), etc.
+
+
+---
+
+
+## grep, sed, and awk
+grep, sed, and awk are a family of tools that use regular expressions and are available on the command line. They each have different capabilities:
+
+- The *grep* command has the basic syntax grep <pattern> <inputfile>. grep grabs matched patterns and prints them.
+- The *sed* command has the basic syntax sed "s/<pattern>/<substitution>/" <inputfile>. Sed combines grep with a substitution command.
+- The *awk* command has the basic syntax awk pattern [action]. awk handles columns.
+
+This chapter will touch on how each tool can help to accomplish the goals in the satellite data problem. grep will help us to investigate the contents of the files, sed will help us to make substitutions where formatting varies across the files, and awk will allow us to do simple calculations on the columns of data.
+
+---
+
+
+## Finding Patterns in Files (grep)
+
+grep is as essential a tool for programming as Google is for navigating the Internet. It is useful for everything from inspecting files to debugging. Indeed, grep works a lot like Google. It searches, globally, for regular expressions inside files, based on their content.
+
+In the satellite data example, we want to know a few things before we start fixing the files:
+
+- How many and which of the files use Gs?
+- Which files use the dash and which use the dot in date formats?
+
+grep can help answer these questions. To answer the first question, we simply want to tell grep “search for all instances of Gs among the files in this directory.” The syntax is simply grep Gs *. 
+
+```
+$ grep Gs *
+Oscorp.DAT_1:2000-1-1,481.983486734Gs
+Oscorp.DAT_1:2000-1-2,254.229864682Gs
+Oscorp.DAT_1:2000-1-3,57.4087373703Gs
+Oscorp.DAT_1:2000-1-4,425.027959432Gs
+...
+```
+
+Remember to check out the man page on grep for more information.
+
+---
+
+<hr> 
+### EXTENDED EXERCISES WITH GREP
+- Enter the directory /usr/share/dict, and investigate the document called words. Use wc -l. Use -c. On the command line, try the following exercises to familiarize yourself with grep:
+- Look for the word hacker in the words document, using the command grep "hacker" words.
+- Compare grep -c "within" words and grep -c "\within" words.
+- Compare grep -c ".ithin" words to grep -c "\within" words.
+- Try grep -c ".*ithin" words, etc.
+- Try grep -c "pre.+" words and grep -c ".+pre.+" words.
+- Compare grep "cat" words and grep "^cat" words.
+- Compare grep "cat" words and grep "cat" words.
+- Find blank lines with grep "^$" words.
+- Compare grep ^[rstu]+$ words and grep ^[r-u]+$ words.
+- Compare "grep \^[r-u]{3}" words to grep "[r-u]\{3,\}" words.
+
+Now try the following challenges with the words file:
+- Find all three-letter words.
+- Find all three-letter words involving the letter r.
+- Find the words with two consecutive as.
+- Find the words ending in ’s.
+
+<hr> 
+
+
+---
+
+## Finding and Replacing Patterns in Files (sed)
+
+sed is a tool for substitution. It is essentially the same as grep, but has one major extension: once a character string is matched, it can be substituted with something else. Thus, sed differs from grep, but can duplicate grep as well.
+
+TIP
+Additionally, sed is enabled natively in the vim text editor. There, it can be accessed with <ESC>:s. For more help on sed within vim, type <ESC>:help sed and press Enter.
+
+The syntax for sed substitution through a whole file is:
+
+```
+sed "s/<expression>/<substitution>/g" <inputfile>
+```
+
+This allows very quick substitution of a simple string in a file. In this example, the s (before the first slash) indicates “substitution” and the g (following the final slash) indicates substituting “globally” on every line of the file. Without the g, sed will only replace the first instance of the matched pattern in each line.
+
+---
+
+
+<hr> 
+### EXERCISE: REDIRECT SED OUTPUT TO A FILE
+Execute a sed command on a file in your filesystem (try something simple like "s/the/THE/g").
+
+Note that the altered file text has appeared on the command line.
+
+Using your knowledge of redirection (from Chapter 1), re-execute the command, this time sending the output to a temporary file.
+
+<hr>
+---
+
+
+If there were only one day’s worth of data in the satellite data, it might make sense to directly substitute the badly formatted date type with the better-formatted date type, like so:
+
+```
+sed "s/2014\.05\.01/2014-05-01/g" atmos_sat_42.dat
+```
+
+However, since we have many files, this will have to be scripted. Thankfully, it is possible for sed to save output as a new file, using this syntax:
+
+```
+sed "s/<expression>/<substitution>/" <oldfile> > <newfile>
+```
+
+sed substituion can be made even more efficient if multiple replacement tasks are necessary per file. In that case, you can give multiple commands by piping sed output back into sed (recall the pipe from Chapter 1):
+
+```
+sed "s/a/A/" oldfile.txt | sed "s/b/B/"
+```
+
+This is equivalent to including the -e flag before each substitution:
+
+```
+sed -e "s/a/A/" -e "s/b/B/" oldfile.txt
+```
+---
+
+## Finding and Replacing a Complex Pattern
+To find and replace all dates, we must:
+
+- Match the pattern for any ill-formatted date.
+- Retrieve the date stamp and save the values.
+- Substitute the format, using the saved date values.
+
+Since, sometimes, you’ll need to reuse part of the pattern you matched, sed has syntax to hold the match in memory. It uses parentheses. Specifically, the following syntax matches x and remembers the match:
+
+```
+\(x\)
+```
+
+These are capturing parentheses. With these parentheses, (20[01][0-9]) matches and remembers the “2014” in “2014-05-01”. That string can then be retrieved and reused during the substitution.
+
+This remembering happens in a list that sed stores during the substitution. sed can store many of these snippets per substitution task, and they are retrieved in the order that they were created with a simple \N, where N is the index of the stored snippet.
+
+---
+
+
+We know that, in our example with the date formats, the pattern we would like to match is:
+
+```
+"20[01][0-9].*[0-9][0-9].*[0-9][0-9]"
+```
+
+The types of strings that will be matched by this include:
+
+```
+2014-05-01
+2014-09-10
+2015-10-30
+2014.06.24
+2014/09/23
+2010/12/29
+. . .
+```
+
+From this matched pattern, we would like to retrieve the year, month, and date separately so that the dates can be reformatted as “YYYY-MM-DD”. With sed and its memory, the year is saved first and retrieved as \1. The month is saved second and retrieved as \2, and so on.
+
+---
+
+
+The sed command that fixes all of the malformed dates is then:
+
+```
+sed "s/\(20[01][0-9]\).*\([0-9][0-9]\).*\([0-9][0-9]\)/\1-\2-\3/g" 
+   <filename.dat>
+```
+
+Take some time to digest that. It’s ugly, but should be comprehensible with some dissection. 
+
+---
+
+## sed Extras
+
+Suppose you have text file called *phone.txt* containing phone numbers
+
+With sed, we can use the d character to delete all blank lines in the file of phone numbers:
+
+```
+sed '/^$/d' phone.txt
+```
+
+It can also help us automatically double-space the file. We can do this in a brute-force way by deleting blank lines and appending carriage returns (\n) to each line:
+
+```
+sed -e '/^$/d' -e 's/^\(.\+\)$/\1\n/' phone.txt
+```
+
+But there’s an easier way. Try G:
+
+```
+sed -e '/^$/d' -e G phone.txt
+```
+
+Or even just:
+
+```
+sed '/^$/d;G' phone.txt
+```
+
+---
+
+
+
+It is possible to reformat the phone numbers in phone.txt. Note that this task uses the tool for remembering strings discussed earlier:
+
+```
+sed 's/.*\([0-9]\{3\}\).*\([0-9]\{3\}\).*\([0-9]\{3\}\).*/(\1)\2-\3/' phone.txt
+```
+
+You can number the lines of a file for a more readable display. The syntax for this one is somewhat complex. 
+
+```
+sed '/./=' wordlist.txt | sed '/./N; s/\n/ /'
+```
+
+Also, if you only want to modify a small section of the file, you can specify a line number to modify by indicating the line number at the beginning of the command:
+
+```
+sed '4 s/r/R/' wordlist.txt
+```
+
+You can even specify a range of line numbers to modify by specifying two numbers, separated by a comma:
+
+```
+sed 'sed '4,6 s/r/T/' wordlist.txt
+```
+
+You can also select lines to modify by pattern matching:
+
+```
+sed '/^z/ s/$/zzzzzzzzzz$/' wordlist.txt
+sed '/wade/,/salt/ s/m/PPPPPPPPPP/' wordlist.txt
+```
+
+---
+
+## Recap
+
+#### Examples
+
+- uvwxyz uvwxyz
+- [u-z] One of either u, v, q, x, y, or z
+- [^ ] One of any character except a space
+- p*i Zero or more p characters followed by one i, such as pi or ppppi or i
+- .* Zero or more of any character, such as supercalifragilisticexpialidocious or 42
+- \^spelunking.*(.*) A line starting with spelunking, followed by an opening and closing parenthesis with any string in them
+- \\$ A line ending with just one backslash
+- \$ A (literal) dollar sign
+- .\{4\}z Any four characters followed by a z
+
+Now that we have successfully shown that regular expressions can be used to:
+
+- Find files based on their names (find)
+- Find files based on their content (grep)
+- Replace content based on found patterns (sed)
+
+---
+
+
+## Manipulating Columns of Data (awk)
+A lot of data in physics begins in a simple format: columns of numbers in plain-text documents. Fortunately for us, a command-line tool called awk was invented long ago to quickly and efficiently sort, modify, and evaluate such files. This tool, a sibling to sed and grep, uses regular expressions to get the job done.
+
+It’s not elegant or modern—indeed, it may be the oldest tool in this particular book—but awk is always there. One day, you too will find yourself working on a high-performance computing cluster that holds all of your data, where you don’t have permission to install a new version of Python. awk will be there to help you manipulate your columns of data.
+
+Before we fix the units in our satellite data example, it is worth taking some time to understand awk. As an introductory example, we can investigate the files in the filesystem. On a Linux platform, a list of colors available to the system is found in the /usr/share/X11 directory. On a Unix (Mac OS X) platform, it is made available in /usr/X11/share/X11.
+
+---
+
+
+
+The rgb.txt file in that directory looks like this:
+
+```
+255 250 250   snow
+248 248 255   ghost white
+248 248 255   GhostWhite
+245 245 245   white smoke
+245 245 245   WhiteSmoke
+253 245 230   old lace
+253 245 230   OldLace
+...
+```
+
+To get started investigating and manipulating this columnar data, note that awk can somewhat replicate what sed and grep do. Given a regular expression to match, awk will return the matching lines of a file. 
+
+```
+$ awk '/puff/' rgb.txt
+255 218 185             peach puff
+```
+
+```
+$ awk '/144/' rgb.txt
+112 128 144             slate gray
+112 128 144             SlateGray
+112 128 144             slate grey
+205  41 144             maroon3
+144 238 144             light green
+144 238 144             LightGreen
+```
+
+---
+
+
+We can select the colors that have 144 in the beginning of their hex strings. The caret tells awk to search for a match at the start of each line in the input file.
+
+```
+$ awk '/^144/' rgb.txt
+144 238 144             PaleGreen2
+144 238 144             light green
+144 238 144             LightGreen
+```
+
+We can even pick out the only color with 144 in the middle
+
+```
+$ awk '/^.*\ 144\ .*/' rgb.txt
+30 144 255   dodger blue
+```
+
+In addition to just replicating some of grep’s capabilities, awk can add an action. However, it can only do actions on a column-wise basis. Note that dollar signs ($) indicate columns:
+
+```
+awk '{print $1$2$3}' rgb.txt
+awk '/^255/{print $1$2$3}' rgb.txt
+awk '/^.+ +.+144/{print $1$2$3}' rgb.txt
+```
+
+---
+
+
+The column order can also be switched:
+
+```
+awk '{print $1," ",$2," ",$2," "$1}' rgb.txt
+```
+
+Or we can modify just one line:
+
+```
+awk NR==11'{print $1 $2 $3,"\t",$4}' rgb.txt
+```
+
+And finally, we can do math with awk:
+
+```
+awk NR==11'{print $1,"+",$2,"+",$3,"=",$1+$2+$3}' rgb.txt
+```
+---
+
+
+## Python Regular Expressions
+
+Everything we’ve seen how to do so far in this chapter is also possible in Python. Alternatives to all of these tools exist in the Python regular expression module re, which comes as part of the Python standard library. The re module allows Python-flavored regular expression pattern matching. Combined with the power of other Python modules, the features of grep, sed, and awk can be replicated in Python in an arguably cleaner and more robust syntax, ready for linking to other workflow process subparts.
+
+We’ve emphasized the command-line tools due to their day-to-day importance in the life of a programmer. Very often, regular expression searches are one-offs, such that they are most swiftly executed on the command line. However, the power of regular expressions combined with the power of Python results in something quite formidable.
+
+---
+
+
+grep’s capabilities can be replaced with:
+
+- re.match(*pattern*, *string*) to match a regular expression pattern to the beginning of a string
+- re.search(*pattern*, *string*) to search a string for the presence of a pattern
+- re.findall( *pattern, *string*) to find all occurrences of a pattern in a string
+
+Similarly, the capabilities of sed can be replaced with:
+
+- re.sub(*pattern*, *replacement*, *string*) to substitute all occurrences of a pattern found in a string
+- re.subn(*pattern*,  *replacement*,  *string*)  to substitute all occurrences of a pattern found in a string and return the number of substitutions made
+
+The re model provides a few more powerful utilities as well.
+
+- re.split(*pattern*, *string*) splits a string by the occurrences of a pattern.
+- re.finditer(*pattern*, *string*) returns an iterator yielding a match object for each match.
+- re.compile(*pattern*) precompiles a regex for faster matches
+
+---
+
+
+
+In all of these functions, if a match to a regular expression is not found, then None is returned. If a match is found, then a special MatchObject is returned. 
+
+MatchObjects have methods and attributes that allow you to determine the position in the string of the match, the original regular expression pattern, and the values captured by any parentheses with the MatchObject.groups() method. 
+
+Let’s try to match a date regular expression to some actual dates:
+
+```
+In [1]: import re
+
+In [2]: re.match("20[01][0-9].*[0-9][0-9].*[0-9][0-9]", '2015-12-16')
+Out[2]: <_sre.SRE_Match object; span=(0, 10), match='2015-12-16'>
+
+In [3]: m = re.match("20[01][0-9].*[0-9][0-9].*[0-9][0-9]", '2015-12-16')
+
+In [4]: m.pos
+Out[4]: 0
+
+In [5]: m.groups()
+Out[5]: ()
+
+In [6]: m = re.match("20[01][0-9].*[0-9][0-9].*[0-9][0-9]", 'not-a-date')
+
+In [7]: m is None
+Out[7]: True
+```
+
+---
+
+
+#### Code explaination
+
+- First, import the regular expression module.
+- The string matches the pattern, so a match is returned.
+- Assign the match to a variable name for later use.
+- Find the index in the string of the start of the match.
+- Report all captured groups. This regular expression pattern had no capturing parentheses, so no substrings are reported.
+- Try to match the date pattern against something that is not a date.
+- Note how None is returned when the match fails.
+
+---
+
+To speed up matching multiple strings against a common pattern, it is always a good idea to compile() the pattern. 
+
+Compiling takes much longer than matching. However, once you have a compiled pattern, all of the same functions are available as methods of the pattern. Since the pattern is already known, you don’t need to pass it in when you call match() or search() or the other methods. 
+
+Let’s compile a version of the date regular expression that has capturing parentheses around the actual date values:
+
+```
+In [8]: re_date = re.compile("(20[01][0-9]).*([0-9][0-9]).*([0-9][0-9])") 
+
+In [9]: re_date.match('2014-28-01') 
+Out[9]: <_sre.SRE_Match object; span=(0, 10), match='2014-28-01'>
+
+In [10]: m = re_date.match('2014-28-01')
+
+In [11]: m.groups()
+Out[11]: ('2014', '28', '01')
+```
+
+---
+
+#### Code explaination
+
+- Compile the regular expression and store it as the re_date variable.
+- Use this variable to match against a string.
+- Assign the match to a variable m for later use.
+- Since the regular expression uses capturing parentheses, you can obtain the values within them using the groups() method. A tuple that has the same length as the number of capturing parentheses is returned.
+
+---
+
+
+## Regular Expressions Wrap-up
+
+At this point, your regular expressions skills should include:
+
+- How to speed up command-line use with metacharacters
+- How to find files based on patterns in their names (find)
+- How to find lines in files based on patterns in their content (grep)
+- How to replace text patterns in files (sed)
+- How to manipulate columns of data based on patterns (awk)
+
+
+<hr>
+
+### Exercise
+- A nice interactive tutorial on regular expressions is available at
+http://regexone.com
+
+<hr>
+
+</textarea>
+
+
+    <!-- This is the link to the local copy of Remark -->
+    <script src="../javascript/remark-latest.min.js" type="text/javascript"></script>
+    <!-- See discussion at https://github.com/gnab/remark/issues/222-->
+    <!-- You could alternately use the libraries from remote location -->
+
+    <!-- <script
+        src="https://gnab.github.io/remark/downloads/remark-latest.min.js"
+        type="text/javascript"></script> -->
+      
+    <!-- This is the link to the remote MathJax libraries --> 
+    <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML&delayStartupUntil=configured" type="text/javascript"></script> 
+    <!-- If you want to run your presentation offline, you need to download the MathJax -->
+    <!-- libraries, then uncomment the line below and comment out the one above.-->
+    <!--<script src="../javascript/MathJax/MathJax.js?config=TeX-AMS_HTML&delayStartupUntil=configured,local/local" type="text/javascript"></script> -->
+    <!-- Note: see comment at http://stackoverflow.com/questions/19208536/mathjax-not-working-if-loaded-from-local-js-file-or-if-the-source-code-is-includ-->
+      
+    <script type="text/javascript"> 
+      var slideshow = remark.create({navigation: {click: false}, properties: {class: "center, middle"}});
+
+      // Setup MathJax
+      MathJax.Hub.Config({
+          tex2jax: {
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+          }
+      });
+      MathJax.Hub.Queue(function() {
+          $(MathJax.Hub.getAllJax()).map(function(index, elem) {
+              return(elem.SourceElement());
+          }).parent().addClass('has-jax');
+      });
+
+      MathJax.Hub.Configured();
+    </script>
+  </body>
+</html>
