@@ -26,22 +26,22 @@ downloads is available here:
 2. Create a plot showing an annual cycle of min/max daily temperatures.  Do this for at least three selected Canadian cities.
 
 3. Write a command line program that takes arguments:
-- gdd <temperatures.csv> <tbase> <tupper> 
+  - gdd <temperatures.csv> <tbase> <tupper> 
 and calculates the GDD. Internally your program should handle the command line arguments (look up the package argparse) and implement the actual calculation as one or more functions. 
-- The output from this program needs to be persisently stored. Your choice on how to implement this storage.  Later steps in your work flow must use the results of these calculations.
+  - The output from this program needs to be persisently stored. Your choice on how to implement this storage.  Later steps in your work flow must use the results of these calculations.
 
 4. Create plots showing accumulated GDD vs time for selected cities.  
-- http://wine.wsu.edu/research-extension/files/2011/09/2011-Sept-22-GDD-Chart.jpg
+  - http://wine.wsu.edu/research-extension/files/2011/09/2011-Sept-22-GDD-Chart.jpg
 
 5. Use version control (git) and colloboration tools (GitHub) throughout this project.  Important: make sure you have properly set up your git configuration with your MUN email address. I will use this information to assess your individual contributations to this team project.
-- Team members should all colloborate on a single github repository. The use of branches is permitted but do not use github forks and pull requests.
+  - Team members should all colloborate on a single github repository. The use of branches is permitted but do not use github forks and pull requests.
 
 6. Create a LaTeX report summarizing the results of your project.
 
 7. Create a web based presenation for your results.
-- The remark-js library is nice for doing HTML based presenations
-- This is what I used for some of my lecture slides in this course
-- Host your presenation on a gh-pages branch of GitHub.
+  - The remark-js library is nice for doing HTML based presenations
+  - This is what I used for some of my lecture slides in this course
+  - Host your presenation on a gh-pages branch of GitHub.
 
 8. Implement your entire workflow as a Makefile. Ensure that your entire project is reproducible.
 
@@ -54,10 +54,10 @@ and calculates the GDD. Internally your program should handle the command line a
 Do at least four of the following tasks:
 
 1. Create an plot showing GDD like the example below for selected Canadian cities.
-- https://mesonet.agron.iastate.edu/onsite/features/2015/05/150507.png
+  - https://mesonet.agron.iastate.edu/onsite/features/2015/05/150507.png
 
 1. Create a map showing effective growing degrees over both all of Canada and only for the island of Newfoundland.
- -  http://www.agr.gc.ca/resources/prod/img/env/climat/egdd_prairie_base_eng.jpg
+  -  http://www.agr.gc.ca/resources/prod/img/env/climat/egdd_prairie_base_eng.jpg
 
 1. Explore how GDD calculation depends on the choice of T_base. show your results for either selected cities or create maps.
 
