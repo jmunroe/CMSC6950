@@ -17,6 +17,7 @@ This extend assignments can be thought of being made of a set of tasks to comple
 ### Minimum Core Tasks
 
 All projects are expected to demonstrate the following components: 
+
 1. Download daily historical temperature data for several citiesfrom 
   - http://climate.weather.gc.ca
 This process should be automated. Additional information on bulk
