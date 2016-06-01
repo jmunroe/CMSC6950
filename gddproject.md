@@ -24,10 +24,11 @@ This process should be automated. Additional information on bulk
 downloads is available here:
   - ftp://client_climate@ftp.tor.ec.gc.ca/Pub/Get_More_Data_Plus_de_donnees/
   - You could either use wget as suggested or use the requests python library.
+  - 
 2. Create a plot showing an annual cycle of min/max daily temperatures.  Do this for at least three selected Canadian cities.
 
 3. Write a command line program that takes arguments:
-  - gdd <temperatures.csv> <tbase> <tupper> 
+  - gdd *temperatures.csv* *tbase* *tupper* 
 and calculates the GDD. Internally your program should handle the command line arguments (look up the package argparse) and implement the actual calculation as one or more functions. 
   - The output from this program needs to be persisently stored. Your choice on how to implement this storage.  Later steps in your work flow must use the results of these calculations.
 
